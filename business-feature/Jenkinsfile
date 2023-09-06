@@ -1,0 +1,48 @@
+#!groovy
+
+pipeline {
+    agent any
+     options {
+        buildDiscarder logRotator(
+                    daysToKeepStr: '16',
+                    numToKeepStr: '10'
+            )
+    }
+    stages {
+        stage('build') {
+            steps {
+                echo 'build bfs'
+            }
+        }
+        stage("test"){
+              steps{
+                echo "pipenv run pytest"
+              }
+        }
+        stage("publish"){
+              steps{
+                sh "ls"
+                sh "sh component/business-feature/pipeline/build.sh"
+              }
+        }
+    }
+    post {
+         always {
+             echo 'This will always run'
+         }
+         failure {
+             echo 'This will run only if successful'
+         }
+         success {
+             mail bcc: '', body: "<b>Example</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "ERROR CI: Project name -> ${env.JOB_NAME}", to: "praveen.bl@kloud9.com";
+         }
+         unstable {
+             echo 'This will run only if the run was marked as unstable'
+         }
+         changed {
+             echo 'This will run only if the state of the Pipeline has changed'
+             echo 'For example, if the Pipeline was previously failing but is now successful'
+         }
+     }
+}
+
