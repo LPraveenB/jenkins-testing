@@ -22,6 +22,7 @@ pipeline {
         stage("publish"){
               steps{
                 sh "ls"
+                sh "chmod +x component/business-feature/pipeline/build.sh"
                 sh "sh component/business-feature/pipeline/build.sh"
               }
         }
