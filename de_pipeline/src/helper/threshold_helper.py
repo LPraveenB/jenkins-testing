@@ -20,7 +20,7 @@ class ThresholdHelper(Helper):
     def __init__(self):
         super().__init__()
 
-    def get_pyspark_threshold_args(self, date_missing_files) -> list:
+    def get_pyspark_threshold_args(self,date_missing_files) -> list:
         """
 
         Args:

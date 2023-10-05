@@ -54,7 +54,7 @@ class DenormHelper(Helper):
     def submit_dataproc_job(self, location_groups, batch_id, context):
         batch_config = {
             "pyspark_batch": {
-                "main_python_file_uri": self.get_env_variable("dev-data-denorm", "main_python_file_uri", "script_bucket", "script_folder"),
+                "main_python_file_uri": self.get_env_variable("dev-data-denorm", "main_python_file_uri", "script_bucket","script_folder"),
                 "args": self.get_pyspark_denorm_args(location_groups),
                 "python_file_uris": self.get_env_variable("dev-data-denorm", "python_file_uris"),
                 "file_uris": self.get_env_variable("dev-data-denorm", "file_uris")

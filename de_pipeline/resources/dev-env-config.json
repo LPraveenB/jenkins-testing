@@ -4,5 +4,7 @@
   "subnetwork_uri": "datproc-batch-uswest1",
   "dag_schedule": "None",
   "project_id": "dollar-tree-project-369709",
-  "historical_mode": "N"
+  "historical_mode": "N",
+  "ml_pipeline_base_path":
+          "ml_pipeline_bucket"
 }

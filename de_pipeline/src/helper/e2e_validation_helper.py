@@ -15,7 +15,7 @@ from airflow.providers.google.cloud.operators.dataproc import (
 from airflow.models import Variable
 
 
-class E2EHelper(Helper):
+class E2EValidationHelper(Helper):
 
     def __init__(self):
         super().__init__()

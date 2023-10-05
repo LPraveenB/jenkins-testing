@@ -2,10 +2,10 @@
   "base_bucket": "extracted-bucket-dollar-tree",
   "script_bucket": "vertex-scripts",
   "script_folder": "de-scripts",
-  "base_path": "Praveen/raw_data",
+  "base_path": "darshan/raw_data",
   "main_python_file_uri": "gs://{{script_bucket}}/{{script_folder}}/merge/merge.py",
-  "denorm_consolidated": "gs://{{base_bucket}}/Praveen/historical/historical_denorm/denormalized.parquet",
-  "bfs_consolidated": "gs://{{base_bucket}}/Praveen/historical/historical_feature_store/business_fs.parquet",
-  "datasplit_consolidated": "gs://{{base_bucket}}/Praveen/historical/historical_feature_store/data_split.parquet"
+  "denorm_consolidated": "gs://{{base_bucket}}/darshan/historical/historical_denorm/denormalized.parquet",
+  "bfs_consolidated": "gs://{{base_bucket}}/darshan/historical/historical_feature_store/business_fs.parquet",
+  "datasplit_consolidated": "gs://{{base_bucket}}/darshan/historical/historical_feature_store/data_split.parquet"
 
 }

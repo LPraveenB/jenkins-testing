@@ -53,7 +53,7 @@ class IngestionHelper(Helper):
                     received_dict[file_params[1]] = file_params[0].replace("/", "") + "," + files_received
                 else:
                     received_dict[file_params[1]] = file_params[0].replace("/", "")
-            src_bucket.copy_blob(each_blob, dest_bucket, dest_folder +each_blob.name.split('/')[-1])
+            src_bucket.copy_blob(each_blob, dest_bucket, dest_folder + each_blob.name.split('/')[-1])
             logging.info(" - get completed ")
         logging.info(received_dict)
         return received_dict
@@ -165,12 +165,10 @@ class IngestionHelper(Helper):
         client = storage.Client()
         return list(client.list_blobs(bucket_name, prefix=filename))
 
-    def get_valid_files_after_ingestion(self):
+    def get_valid_files_after_ingestion(self, process_name: str):
         valid_files = []
         src_path = self.get_env_variable("dev-data-ingestion", "success_path", "base_bucket",
                                          "base_path")
-
-        parallel_cluster = int(self.get_env_variable("dev-data-ingestion", "parallel_cluster"))
 
         drop_files = self.list_files(src_path)
         for each_blob in drop_files:
@@ -179,5 +177,24 @@ class IngestionHelper(Helper):
             print('gcs_file_name', gcs_file_name)
             if gcs_file_name.strip() != '':
                 valid_files.append('gs://' + each_blob.bucket.name + '/' + each_blob.name)
-        chunk_size = math.ceil(len(valid_files) / parallel_cluster)
-        return [valid_files[x:x + chunk_size] for x in range(0, len(valid_files), chunk_size)]
+
+        if process_name == "validator":
+            parallel_cluster = int(self.get_env_variable("dev-data-ingestion", "parallel_cluster"))
+            chunk_size = math.ceil(len(valid_files) / parallel_cluster)
+            print(" -- chunk size ",chunk_size)
+            print(" -- no of valid files ", len(valid_files))
+            return [valid_files[x:x + chunk_size] for x in range(0, len(valid_files), chunk_size)]
+        else:
+            # passing the valid files on table level
+            result_map = {}
+            for item in valid_files:
+                # Split the value using "/"
+                split_values = item.split("/")
+                # Extract the value at index -2
+                key = split_values[-2]
+                # Add the item to the corresponding list in the dictionary
+                if key not in result_map:
+                    result_map[key] = []
+                result_map[key].append(item)
+            resultList = [(key, value) for key, value in result_map.items()]
+            return resultList

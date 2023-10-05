@@ -1,0 +1,22 @@
+{
+  "base_bucket": "extracted-bucket-dollar-tree",
+  "script_bucket": "vertex-scripts",
+  "base_path": "darshan/raw_data",
+  "input_path": "gs://extracted-bucket-dollar-tree/Raghav/test_files/business_feature_store_all_loc_V1",
+  "data_split_out_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/data_split/",
+  "max_records_per_batch": "10000",
+  "parallel_cluster":"60",
+  "spark_properties": {
+    "spark.executor.instances": "17",
+    "spark.executor.cores": "8",
+    "spark.driver.cores": "8",
+    "spark.driver.memory": "32g",
+    "spark.executor.memory": "32g",
+    "spark.dynamicAllocation.enabled":"true",
+    "spark.dynamicAllocation.minExecutors": "6",
+    "spark.sql.autoBroadcastJoinThreshold": "-1",
+    "spark.executor.extraJavaOptions":"-XX:+UseG1GC"
+  },
+  "main_python_file_uri":"gs://vertex-scripts/ml-scripts/data_split.py",
+  "python_file_uris": ["gs://vertex-scripts/ml-scripts/transform.py"]
+}

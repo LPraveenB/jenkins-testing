@@ -10,5 +10,5 @@
   ],
   "special_files": [],
   "py_file_path": "/home/airflow/gcs/dags/ghost_calc_pipelines/components/data-ingestion/src/main.py",
-  "parallel_cluster": 3
+  "parallel_cluster": 28
 }
