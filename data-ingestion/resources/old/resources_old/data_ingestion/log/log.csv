@@ -1,0 +1,4 @@
+sub_proc_id,run_id,task_id,component,run_date,file_date,status,priority,error_code,error_message,missed_files,processed_files,unpermitted_files,extra
+1,2,3,Data Ingestion,20230630,20230630,failed,critical,DATA_ING_ERR_001,All Files missed for the day,['FD_STORE_INV'],,,
+1,2,3,Data Ingestion,20230701,20230630,success,,,,,"['FD_STORE_INV','FD_INV_ADJ']",,
+1,2,3,Data Ingestion,20230701,20230701,failed,critical,DATA_ING_ERR_001,All Files missed for the day,['FD_STORE_INV'],,,

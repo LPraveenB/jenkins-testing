@@ -1,0 +1,30 @@
+#!groovy
+
+pipeline {
+    agent any
+    options {
+        buildDiscarder logRotator( 
+                    daysToKeepStr: '16', 
+                    numToKeepStr: '10'
+            )
+    }
+    stages {
+        stage('build') {
+            steps {
+                echo 'data ingest vinay'
+            }
+        }
+        stage("test"){
+              steps{
+                echo "pipenv run pytest"
+              }
+        }
+        stage("publish"){
+              steps{
+                sh "cd component/data-ingestion/src"
+                sh "gsutil cp *.py gs://vertex-scripts"
+              }
+        }
+    }
+}
+
