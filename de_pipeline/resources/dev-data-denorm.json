@@ -10,7 +10,7 @@
   "master_src_path": "gs://extracted-bucket-dollar-tree/Ramalingam/prod/demo/runs/master/",
   "dest_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/data-denorm",
   "historical_mode": "N",
-  "parallel_cluster": "81",
+  "parallel_cluster": "3",
   "spark_properties": {
     "spark.executor.instances": "3",
     "spark.executor.cores": "8",
