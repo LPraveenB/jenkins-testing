@@ -1,0 +1,14 @@
+{
+  "actual_file_path":"gs://extracted-bucket-dollar-tree/Ramalingam/prod/temp/actual/actuals.csv",
+  "inference_output_file_path":"gs://extracted-bucket-dollar-tree/Praveen/transformed/prediction",
+  "create_single_prediction_csv":"Y",
+  "single_prediction_csv_output_path":"gs://extracted-bucket-dollar-tree/Praveen/prod/temp/predictions_single/2022-08-12",
+  "metrics_output_file_path":"gs://extracted-bucket-dollar-tree/Praveen/metrics_output/report.csv",
+  "model_performance_report_output_file_path":"gs://extracted-bucket-dollar-tree/Praveen/metrics_output/model_performence/2022-08-12",
+  "dask_address":"local",
+  "num_workers_local_cluster":"2",
+  "num_threads_per_worker":"1",
+  "memory_limit_local_worker":"100G",
+  "dask_connection_timeout":"120",
+  "local_dask_flag":"Y"
+}

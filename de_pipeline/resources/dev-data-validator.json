@@ -1,0 +1,28 @@
+{
+  "base_bucket": "extracted-bucket-dollar-tree",
+  "base_path": "Praveen/raw_data",
+  "input_path":"gs://{{base_bucket}}/{{base_path}}/{{run_date}}/success/",
+  "error_path":"gs://{{base_bucket}}/{{base_path}}/{{run_date}}/error/",
+  "report_path":"gs://{{base_bucket}}/{{base_path}}/{{run_date}}/report/",
+  "json_path":"gs://vertex-scripts/de-scripts/validator/resources/validations.json",
+  "python_file_uris": ["gs://vertex-scripts/de-scripts/validator/src/config.py",
+  "gs://vertex-scripts/de-scripts/validator/src/utils/file_utils.py",
+  "gs://vertex-scripts/de-scripts/validator/src/utils/gcs_utils.py",
+  "gs://vertex-scripts/de-scripts/validator/src/helpers/logger_helpers.py",
+  "gs://vertex-scripts/de-scripts/validator/src/utils/logger_utils.py",
+  "gs://vertex-scripts/de-scripts/validator/src/helpers/main_helpers.py",
+  "gs://vertex-scripts/de-scripts/validator/src/utils/spark_utils.py"],
+  "main_python_file_uri":"gs://vertex-scripts/de-scripts/validator/src/main.py",
+  "threshold_python_uri": "gs://vertex-scripts/de-scripts/validator/src/threshold.py",
+  "spark_properties": {
+    "spark.executor.instances": "12",
+    "spark.executor.cores": "8",
+    "spark.driver.cores": "8",
+    "spark.driver.memory": "32g",
+    "spark.executor.memory": "32g",
+    "spark.dynamicAllocation.enabled":"true",
+    "spark.dynamicAllocation.minExecutors": "6",
+    "spark.sql.autoBroadcastJoinThreshold": "-1",
+    "spark.executor.extraJavaOptions":"-XX:+UseG1GC"
+  }
+}

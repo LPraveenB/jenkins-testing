@@ -1,0 +1,8 @@
+{
+  "region": "us-west1",
+  "service_account": "prod-vm-dataproc@dollar-tree-project-369709.iam.gserviceaccount.com",
+  "subnetwork_uri": "datproc-batch-uswest1",
+  "dag_schedule": "None",
+  "project_id": "dollar-tree-project-369709",
+  "historical_mode": "N"
+}
