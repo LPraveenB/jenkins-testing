@@ -23,7 +23,7 @@
     "spark.executor.extraJavaOptions":"-XX:+UseG1GC"
   },
   "main_python_file_uri":"gs://{{script_bucket}}/{{script_folder}}/data-denorm/denormalizer.py",
-  "python_file_uris": ["gs://vertex-scripts/de-scripts/data-denorm/table_mapping_config.py","gs://vertex-scripts/de-scripts/data-denorm/utils.py"],
+  "python_file_uris": ["gs://vertex-scripts/de-scripts/data-denorm/table_mapping_config.py", "gs://vertex-scripts/de-scripts/data-denorm/utils.py"],
   "file_uris":["gs://vertex-scripts/de-scripts/data-denorm/resources/table_mapping.json"]
 }
 

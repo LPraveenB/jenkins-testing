@@ -37,7 +37,7 @@ class AuditDataHelper(Helper):
                         '--mapping_path',
                         self.get_env_variable("dev-data-audit", "mapping_path", "script_bucket","script_folder"),
                         '--denorm_src_path',
-                        self.get_env_variable("dev-data-audit", "denorm_src_path", "base_bucket", "base_path"),
+                        self.get_env_variable("dev-data-audit", "input_path", "base_bucket", "base_path"),
                         '--dest_path',
                         self.get_env_variable("dev-data-audit", "dest_path", "base_bucket", 'base_path'),
                         '--historical_mode',
@@ -55,7 +55,9 @@ class AuditDataHelper(Helper):
         batch_config = {
             "pyspark_batch": {
                 "main_python_file_uri": self.get_env_variable("dev-data-audit", "main_python_file_uri", "script_bucket","script_folder"),
-                "args": self.get_pyspark_audiit_args(location_groups)
+                "args": self.get_pyspark_audiit_args(location_groups),
+                "python_file_uris": self.get_env_variable("dev-data-denorm", "python_file_uris"),
+                "file_uris": self.get_env_variable("dev-data-audit", "file_uris")
             },
             "runtime_config": {
                 "properties": self.get_env_variable("dev-data-audit", "spark_properties")

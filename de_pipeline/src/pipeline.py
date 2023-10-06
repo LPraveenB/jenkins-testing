@@ -17,9 +17,9 @@ default_args = {
     'start_date': days_ago(1),
 }
 
-credential_path = "/home/airflow/gcs/dags/ghost_calc_pipelines/components/de_pipeline/src/credentials.json"
+"""credential_path = "/home/airflow/gcs/dags/ghost_calc_pipelines/components/de_pipeline/src/credentials.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
-os.environ['GOOGLE_CLOUD_PROJECT'] = "dollar-tree-project-369709"
+os.environ['GOOGLE_CLOUD_PROJECT'] = "dollar-tree-project-369709"""
 
 
 def check_received_files():
@@ -121,7 +121,7 @@ def get_list_location_groups(path_to_preprocessed_dir):
     location_groups = obj_helper.get_location_groups()
     location_groups = obj_helper.get_location_group_in_batches(location_groups=location_groups,
                                                                component_name=constant.DENORM)
-    # location_groups = [['0.0'],['1.0']]
+    location_groups = [['0.0']]
     return location_groups
 
 
@@ -142,19 +142,76 @@ def denorm(location_groups):
         obj_helper.delete_batch(constant.DENORM, batch_id, context)
         return location_groups
 
-    @task
-    def merge_denorm(location_groups, **context):
-        logging.info("merging denorm")
-        obj_helper = PipelineHelper()
-        obj_helper.denorm_merge(location_groups, context)
-        logging.info("-- merging --")
-        logging.info(location_groups)
-        return location_groups
-
-    denorm_location_group = merge_denorm(delete_job(submit_job(location_groups)))
+    denorm_location_group = delete_job(submit_job(location_groups))
     # denorm_location_group = delete_job(submit_job(location_groups))
     logging.info(denorm_location_group)
     return denorm_location_group
+
+@task
+def start_audit_apply(location_groups):
+    logging.info("waiting for denorm completion")
+    logging.info(location_groups)
+    return location_groups
+
+@task_group(group_id='Audit_Apply')
+def audit_apply(location_groups):
+    @task
+    def submit_job(location_group, **context):
+        obj_helper = PipelineHelper()
+        batch_id = obj_helper.submit_audit_data_apply(location_group, context)
+        return location_group, batch_id
+
+    @task
+    def delete_job(submit_batch_details, **context):
+        batch_id = submit_batch_details[1]
+        location_group = submit_batch_details[0]
+        obj_helper = PipelineHelper()
+        obj_helper.delete_batch(constant.AUDIT_DATA, batch_id, context)
+        return location_group
+
+    audit_location_grp = delete_job(submit_job(location_groups))
+    logging.info(audit_location_grp)
+    return audit_location_grp
+
+@task
+def start_e2e_validation(location_groups):
+    logging.info("waiting for denorm completion")
+    logging.info(location_groups)
+    return location_groups
+
+
+@task_group(group_id='E2E_Validation')
+def e2e_validation(location_groups):
+    @task
+    def submit_job(location_group, **context):
+        logging.info(" location group received in submit job- ")
+        obj_helper = PipelineHelper()
+        batch_id = obj_helper.submit_e2e_validator_job(location_group, context)
+        return location_group, batch_id
+
+    @task
+    def delete_job(submit_batch_details, **context):
+        batch_id = submit_batch_details[1]
+        location_groups = submit_batch_details[0]
+        obj_helper = PipelineHelper()
+        obj_helper.delete_batch(constant.E2E_VALIDATOR, batch_id, context)
+        return location_groups
+
+
+    e2e_location_groups = delete_job(submit_job(location_groups))
+    # denorm_location_group = delete_job(submit_job(location_groups))
+    logging.info(e2e_location_groups)
+    return e2e_location_groups
+
+
+@task
+def merge_denorm(location_groups, **context):
+    logging.info("merging denorm")
+    obj_helper = PipelineHelper()
+    obj_helper.denorm_merge(location_groups, context)
+    logging.info("-- merging --")
+    logging.info(location_groups)
+    return location_groups
 
 
 @task
@@ -232,9 +289,11 @@ def prod_pipeline_v1():
     """
     valid_files = threshold(validator.expand(ingested_files=fd_ingestion()))
     location_groups = get_list_location_groups(preprocess.expand(valid_files=valid_files))
-    denorm_processed_grp = start_bfs(denorm.expand(location_groups=location_groups))
-    # bfs_location_grp = start_inference(business_fs.expand(location_groups=denorm_processed_grp))
-    # inf_location_grp = start_inference_metric(inference.expand(location_groups=bfs_location_grp))
+    denorm_processed_grp = start_audit_apply(denorm.expand(location_groups=location_groups))
+    audit_processed_grps = start_e2e_validation(audit_apply.expand(location_groups=denorm_processed_grp))
+    e2e_processed_grps = start_bfs(e2e_validation.expand(location_groups=audit_processed_grps))
+    # bfs_location_grp = start_inference(business_fs.expand(location_groups=e2e_processed_grps))
+    # inf_location_grp = end_pipeline(inference.expand(location_groups=bfs_location_grp))
     # inference_metrics_helper.inference_metrics(inf_location_grp)
 
 

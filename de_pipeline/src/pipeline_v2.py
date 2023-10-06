@@ -292,7 +292,7 @@ def prod_pipeline_v2():
     audit_processed_grps = start_e2e_validation(audit_apply.expand(location_groups=denorm_processed_grp))
     e2e_processed_grps = start_bfs(e2e_validation.expand(location_groups=audit_processed_grps))
     # bfs_location_grp = start_inference(business_fs.expand(location_groups=e2e_processed_grps))
-    inf_location_grp = end_pipeline(inference.expand(location_groups=bfs_location_grp))
+    # inf_location_grp = end_pipeline(inference.expand(location_groups=bfs_location_grp))
     # inference_metrics_helper.inference_metrics(inf_location_grp)
 
 
