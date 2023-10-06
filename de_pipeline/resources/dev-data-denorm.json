@@ -12,7 +12,7 @@
   "historical_mode": "N",
   "parallel_cluster": "3",
   "spark_properties": {
-    "spark.executor.instances": "3",
+    "spark.executor.instances": "8",
     "spark.executor.cores": "8",
     "spark.driver.cores": "8",
     "spark.driver.memory": "32g",

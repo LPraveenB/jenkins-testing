@@ -5,9 +5,9 @@
   "input_path": "gs://extracted-bucket-dollar-tree/Raghav/test_files/business_feature_store_all_loc_V1",
   "data_split_out_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/data_split/",
   "max_records_per_batch": "10000",
-  "parallel_cluster":"60",
+  "parallel_cluster":"3",
   "spark_properties": {
-    "spark.executor.instances": "17",
+    "spark.executor.instances": "8",
     "spark.executor.cores": "8",
     "spark.driver.cores": "8",
     "spark.driver.memory": "32g",

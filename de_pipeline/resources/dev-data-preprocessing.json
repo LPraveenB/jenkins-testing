@@ -7,7 +7,7 @@
   "output_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/processed/",
   "python_file_uris": ["gs://vertex-scripts/de-scripts/pre-processor/utils.py","gs://vertex-scripts/de-scripts/pre-processor/config.py"],
   "spark_properties": {
-    "spark.executor.instances": "12",
+    "spark.executor.instances": "8",
     "spark.executor.cores": "8",
     "spark.driver.cores": "8",
     "spark.driver.memory": "32g",
