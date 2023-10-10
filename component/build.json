@@ -4,7 +4,7 @@
     "denorm": "gs://vertex-scripts/de-scripts-CICD/data-denorm/",
     "audit_apply": "gs://vertex-scripts/de-scripts-CICD/audit-apply",
     "ingestion_af": "gs://us-west1-fd-audit-test-prav-f7b79484-bucket/dags/ghost_calc_pipelines/components/",
-    "ingestion": "gs://vertex-scripts/de-scripts-CICD/data-ingestion"/,
+    "ingestion": "gs://vertex-scripts/de-scripts-CICD/data-ingestion/",
     "validator": "gs://vertex-scripts/de-scripts-CICD/validator/",
     "e2e_validator": "gs://vertex-scripts/de-scripts-CICD/e2e-validator/",
     "merge": "gs://vertex-scripts/de-scripts-CICD/merge/",
