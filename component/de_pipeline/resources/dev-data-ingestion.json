@@ -1,0 +1,14 @@
+{
+  "base_bucket": "extracted-bucket-dollar-tree",
+  "base_path": "Praveen/raw_data",
+  "drop_path": "gs://{{base_bucket}}/{{base_path}}/client_drop/",
+  "load_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/load/",
+  "success_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/success/",
+  "error_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/error/",
+  "required_files": [
+    "FD_STORE_INV"
+  ],
+  "special_files": [],
+  "py_file_path": "/home/airflow/gcs/dags/ghost_calc_pipelines/components/data-ingestion/src/main.py",
+  "parallel_cluster": 3
+}

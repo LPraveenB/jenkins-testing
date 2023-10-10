@@ -1,0 +1,27 @@
+{
+  "base_bucket": "extracted-bucket-dollar-tree",
+  "script_bucket": "vertex-scripts",
+  "base_path": "darshan/raw_data",
+  "input_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/processed/",
+  "load_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/load/",
+  "error_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/error/",
+  "mapping_path": "gs://vertex-scripts/de-scripts/bfs/resources/table_mapping.json",
+  "denorm_src_path": "gs://{{base_bucket}}/darshan/historical/historical_denorm/denormalized.parquet",
+  "meta_src_path": "gs://{{base_bucket}}/Ramalingam/prod/temp/master/denorm_meta.parquet",
+  "dest_path": "gs://{{base_bucket}}/{{base_path}}/{{run_date}}/business_feature_store",
+  "parallel_cluster": "81",
+  "spark_properties": {
+    "spark.executor.instances": "3",
+    "spark.executor.cores": "16",
+    "spark.driver.cores": "16",
+    "spark.driver.memory": "64g",
+    "spark.executor.memory": "64g",
+    "spark.dynamicAllocation.enabled":"true",
+    "spark.dynamicAllocation.minExecutors": "3",
+    "spark.sql.autoBroadcastJoinThreshold": "-1",
+    "spark.executor.extraJavaOptions":"-XX:+UseG1GC"
+  },
+  "main_python_file_uri":"gs://vertex-scripts/de-scripts/bfs/src/business_feature_store.py",
+  "python_file_uris": ["gs://vertex-scripts/de-scripts/bfs/src/table_mapping_config.py","gs://vertex-scripts/de-scripts/bfs/src/utils.py"],
+  "file_uris":["gs://vertex-scripts/de-scripts/bfs/resources/table_mapping.json"]
+}

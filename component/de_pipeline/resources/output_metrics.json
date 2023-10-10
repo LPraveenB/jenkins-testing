@@ -1,0 +1,27 @@
+{
+  "base_bucket": "extracted-bucket-dollar-tree",
+  "base_path": "darshan/raw_data",
+  "input_path":"gs://{{base_bucket}}/{{base_path}}/{{run_date}}/success/",
+  "error_path":"gs://{{base_bucket}}/{{base_path}}/{{run_date}}/error/",
+  "report_path":"gs://{{base_bucket}}/{{base_path}}/{{run_date}}/report/",
+  "json_path":"gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/validations.json",
+  "python_file_uris": ["gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/config.py",
+  "gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/file_utils.py",
+  "gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/gcs_utils.py",
+  "gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/logger_helpers.py",
+  "gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/logger_utils.py",
+  "gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/main_helpers.py",
+  "gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/spark_utils.py"],
+  "main_python_file_uri":"gs://us-west1-fd-de-ml-pipelines-03b65d84-bucket/dags/ghost_calc_pipelines/components/data-validator/src/main.py",
+  "spark_properties": {
+    "spark.executor.instances": "12",
+    "spark.executor.cores": "8",
+    "spark.driver.cores": "8",
+    "spark.driver.memory": "32g",
+    "spark.executor.memory": "32g",
+    "spark.dynamicAllocation.enabled":"true",
+    "spark.dynamicAllocation.minExecutors": "6",
+    "spark.sql.autoBroadcastJoinThreshold": "-1",
+    "spark.executor.extraJavaOptions":"-XX:+UseG1GC"
+  }
+}

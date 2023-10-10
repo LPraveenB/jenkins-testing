@@ -1,0 +1,30 @@
+#!groovy
+
+pipeline {
+    agent any
+     options {
+        buildDiscarder logRotator(
+                    daysToKeepStr: '16',
+                    numToKeepStr: '10'
+            )
+    }
+    stages {
+        stage('build') {
+            steps {
+                echo 'build data audit'
+            }
+        }
+        stage("test"){
+              steps{
+                echo "pipenv run pytest"
+              }
+        }
+        stage("publish_audit"){
+              steps{
+                sh "ls"
+                sh "sh component/audit-apply/pipeline/build.sh"
+              }
+        }
+    }
+}
+
