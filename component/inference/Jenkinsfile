@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+    options {
+        buildDiscarder logRotator(
+            daysToKeepStr: '16',
+            numToKeepStr: '10'
+        )
+    }
+    stages {
+        stage('build') {
+            steps {
+                echo 'build inference'
+            }
+        }
+        stage("test") {
+            steps {
+                echo "pipenv run pytest"
+            }
+        }
+        stage("prepare_build") {
+            steps {
+                sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
+            }
+        }
+        stage("publish_inference") {
+            steps {
+                script {
+                    def config = readJSON file: "${WORKSPACE}/component/build.json"
+                    def inferenceConfig = config.script_paths.inference_image
+                    def region = inferenceConfig.region
+                    def project = inferenceConfig.project
+                    def repository = inferenceConfig.repository
+                    def imageName = inferenceConfig.imageName
+                    def pythonVersion = inferenceConfig.pythonVersion
+
+                    // Changing the working directory to where the Dockerfile is located
+                    dir("${WORKSPACE}/component/inference") {
+                        sh "docker build -t inference --build-arg PYTHON_VERSION=${pythonVersion}-f Dockerfile ."
+                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                    }
+                }
+            }
+        }
+        stage("publish_inference_metrics") {
+            steps {
+                script {
+                    def config = readJSON file: "${WORKSPACE}/component/build.json"
+                    def metricConfig = config.script_paths.inference_metric_image
+                    def region = metricConfig.region
+                    def project = metricConfig.project
+                    def repository = metricConfig.repository
+                    def imageName = metricConfig.imageName
+
+                    // Changing the working directory to where the Dockerfile is located
+                    dir("${WORKSPACE}/component/inference") {
+                        sh "docker build -t inference-metric -f Dockerfile_metrics ."
+                        sh "docker tag inference-metric ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                    }
+                }
+            }
+        }
+    }
+}
