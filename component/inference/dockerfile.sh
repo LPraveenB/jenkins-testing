@@ -24,7 +24,7 @@ COPY pipeline/build.json /app/
 # Install packages using versions from the config file
 WORKDIR /app
 
-RUN python3 -m pip install -U $(cat build.json | jq -r '.package_versions | to_entries[] | "\(.key)==\(.value)"')
+RUN python3 -m pip install -U $(cat /app/build.json | jq -r '.package_versions | to_entries[] | "\(.key)==\(.value)"')
 
 # Remove the JSON config file
 RUN rm -rf build.json
