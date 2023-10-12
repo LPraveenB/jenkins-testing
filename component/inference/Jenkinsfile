@@ -17,7 +17,11 @@ pipeline {
                 echo "pipenv run pytest"
             }
         }
-
+        stage("prepare_build") {
+            steps {
+                sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
+            }
+        }
         stage("publish_inference") {
             steps {
                 script {
