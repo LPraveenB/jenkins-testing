@@ -17,7 +17,6 @@ pipeline {
                 echo "pipenv run pytest"
             }
         }
-
         stage("publish_inference") {
             steps {
                 script {
@@ -36,8 +35,9 @@ pipeline {
                         sh "docker build -t inference -f Dockerfile ."
                         withDockerRegistry([credentialsId: "gcr:${PROJECT}",
                         url: "https://LOCATION-docker.pkg.dev/${PROJECT}/${REPOSITORY}"]) {
-                        sh 'docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${region}/${project}/${repository}/${imageName}:latest'
-                        sh 'docker push ${region}/${project}/${repository}/${imageName}:latest'
+                            sh 'docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${region}/${project}/${repository}/${imageName}:latest'
+                            sh 'docker push ${region}/${project}/${repository}/${imageName}:latest'
+                        }
                     }
                 }
             }
