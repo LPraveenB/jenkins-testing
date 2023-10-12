@@ -8,7 +8,7 @@
       "region": "us-west1-docker.pkg.dev",
       "repository": "fd-dask-docker",
       "imageName": "dask-mlinference-image",
-      "credentialsId": "0112046f-5ac9-45a6-a9d5-4b34d64ef1e1",
+      "credentialsId": "GCP-AUTH",
       "pythonVersion": "3.8.15"
     },
     "inference_metric_image": {
