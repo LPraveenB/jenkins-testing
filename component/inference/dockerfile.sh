@@ -1,7 +1,9 @@
 #!/bin/bash
 
-CONFIG_FILE="pipeline/build.json"
+CONFIG_FILE="build.json"
 PYTHON_VERSION=$(jq -r '.script_paths.inference_image.pythonVersion' $CONFIG_FILE)
+PACKAGES=$(cat build.json | jq -r '.package_versions | to_entries | .[] | "\(.key)==\(.value)"')
+PACKAGES_INSTALL=$(echo $PACKAGES | tr ' ' '\n' | xargs echo)
 
 cat <<EOF > Dockerfile
 ARG PYTHON_VERSION="$PYTHON_VERSION"
@@ -24,7 +26,8 @@ COPY build.json /app/
 # Install packages using versions from the config file
 WORKDIR /app
 
-RUN python3 -m pip install -U $(cat build.json | jq -r '.package_versions | to_entries[] | "\(.key)==\(.value)"')
+RUN python3 -m pip install -U \\
+    $PACKAGES_INSTALL
 
 # Remove the JSON config file
 RUN rm -rf build.json
