@@ -28,7 +28,7 @@ pipeline {
                     def repository = inferenceConfig.repository
                     def imageName = inferenceConfig.imageName
                     def pythonVersion = inferenceConfig.pythonVersion
-                    def dockerCredentials = credentials('your-credential-id')
+                    def dockerCredentials = inferenceConfig.credentialsId
 
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference") {
