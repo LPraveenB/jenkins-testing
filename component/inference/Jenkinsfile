@@ -40,6 +40,7 @@ pipeline {
                             sh "cat Dockerfile"
                             sh "docker build -t inference -f Dockerfile ."
                             sh "echo '${serviceAccountKeyJson}' > gcp-key.json"
+                            sh "cat gcp-key.json"
                             sh "gcloud auth activate-service-account --key-file=gcp-key.json"
                             sh "docker login -u _json_key --password-stdin https://${region}/${project}/${repository} < gcp-key.json"
                             sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
