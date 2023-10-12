@@ -6,6 +6,7 @@ pipeline {
             numToKeepStr: '10'
         )
     }
+
     stages {
         stage('build') {
             steps {
@@ -27,13 +28,14 @@ pipeline {
                     def repository = inferenceConfig.repository
                     def imageName = inferenceConfig.imageName
                     def pythonVersion = inferenceConfig.pythonVersion
+                    def dockerCredentials = credentials('your-credential-id')
 
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference") {
                         sh "bash dockerfile.sh"
                         sh "cat Dockerfile"
                         sh "docker build -t inference -f Dockerfile ."
-                        withDockerRegistry([credentialsId: "gcr:${project}",
+                        withDockerRegistry([credentialsId: "${project}",
                         url: "https://${region}/${project}/${repository}"]) {
                             sh 'docker tag inference ${region}/${project}/${repository}/${imageName}:latest'
                             sh 'docker push ${region}/${project}/${repository}/${imageName}:latest'
