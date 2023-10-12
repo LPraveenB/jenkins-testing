@@ -2,7 +2,6 @@
 
 CONFIG_FILE="pipeline/build.json"
 PYTHON_VERSION=$(jq -r '.script_paths.inference_image.pythonVersion' $CONFIG_FILE)
-PACKAGES_FILE=$(jq -r '.packages_file' $CONFIG_FILE)
 
 cat <<EOF > Dockerfile
 ARG PYTHON_VERSION="$PYTHON_VERSION"
@@ -20,12 +19,11 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     rm get-pip.py
 RUN python3 -m pip install --upgrade pip
 
-# Copy the packages JSON config file from the workspace into the image
-COPY $PACKAGES_FILE /app/build.json
+COPY build.json /app/
 
 # Install packages using versions from the config file
 WORKDIR /app
-RUN python3 -m pip install -U \$(cat build.json | jq -r '.package_versions | to_entries[] | "\(.key)==\(.value)"')
+RUN python3 -m pip install -U \$(cat build.json | jq -r '.script_paths.package_versions | to_entries[] | "\(.key)==\(.value)"')
 
 # Remove the JSON config file
 RUN rm -rf build.json
