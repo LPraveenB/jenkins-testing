@@ -7,10 +7,6 @@ pipeline {
         )
     }
 
-    environment {
-        SERVICE_ACCOUNT_KEY_JSON = credentials('YourCredentialID') // Replace 'YourCredentialID' with the actual credential ID in Jenkins
-    }
-
     stages {
         stage('build') {
             steps {
@@ -32,20 +28,27 @@ pipeline {
                     def repository = inferenceConfig.repository
                     def imageName = inferenceConfig.imageName
                     def pythonVersion = inferenceConfig.pythonVersion
-                    def dockerCredentials = inferenceConfig.credentialsId
+                    def credentialId = inferenceConfig.credentialsId
 
-                    // Changing the working directory to where the Dockerfile is located
-                    dir("${WORKSPACE}/component/inference") {
-                        sh "bash dockerfile.sh"
-                        sh "cat Dockerfile"
-                        sh "docker build -t inference -f Dockerfile ."
-                        sh "echo '${SERVICE_ACCOUNT_KEY_JSON}' > gcp-key.json"
-                        sh "gcloud auth activate-service-account --key-file=gcp-key.json"
-                        sh "docker login -u _json_key --password-stdin https://${region}/${project}/${repository} < gcp-key.json"
-                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
-                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
-                        sh "docker logout https://${region}/${project}/${repository}"
-                        sh "gcloud auth revoke"
+                    // Fetch the credential from Jenkins
+                    def serviceAccountKeyJson = credentials(credentialId)
+
+                    if (serviceAccountKeyJson != null) {
+                        // Changing the working directory to where the Dockerfile is located
+                        dir("${WORKSPACE}/component/inference") {
+                            sh "bash dockerfile.sh"
+                            sh "cat Dockerfile"
+                            sh "docker build -t inference -f Dockerfile ."
+                            sh "echo '${serviceAccountKeyJson}' > gcp-key.json"
+                            sh "gcloud auth activate-service-account --key-file=gcp-key.json"
+                            sh "docker login -u _json_key --password-stdin https://${region}/${project}/${repository} < gcp-key.json"
+                            sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
+                            sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                            sh "docker logout https://${region}/${project}/${repository}"
+                            sh "gcloud auth revoke"
+                        }
+                    } else {
+                        error "Failed to fetch credentials with ID: ${credentialId}"
                     }
                 }
             }
