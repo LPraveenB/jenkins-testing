@@ -32,9 +32,9 @@
     "scikit-learn": "1.2.2",
     "pandas": "1.5.3",
     "bokeh": "2.4.0",
-    "seaborn": null,
-    "nbformat": null,
-    "nbconvert": null,
-    "papermill": null
+    "seaborn": "",
+    "nbformat": "",
+    "nbconvert": "",
+    "papermill": ""
   }
 }
