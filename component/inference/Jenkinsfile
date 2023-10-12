@@ -39,7 +39,6 @@ pipeline {
                         sh 'docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${region}/${project}/${repository}/${imageName}:latest'
                         sh 'docker push ${region}/${project}/${repository}/${imageName}:latest'
                     }
-
                 }
             }
         }
