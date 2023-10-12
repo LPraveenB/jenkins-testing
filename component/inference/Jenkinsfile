@@ -42,7 +42,6 @@ pipeline {
                         sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
                         sh "docker logout https://${region}/${project}/${repository}"
                         sh "gcloud auth revoke"
-                        }
                     }
                 }
             }
