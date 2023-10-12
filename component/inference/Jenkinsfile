@@ -7,6 +7,10 @@ pipeline {
         )
     }
 
+    environment {
+        SERVICE_ACCOUNT_KEY_JSON = credentials('YourCredentialID') // Replace 'YourCredentialID' with the actual credential ID in Jenkins
+    }
+
     stages {
         stage('build') {
             steps {
