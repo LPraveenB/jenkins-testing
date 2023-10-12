@@ -4,7 +4,7 @@ CONFIG_FILE="pipeline/build.json"
 PYTHON_VERSION=$(jq -r '.script_paths.inference_image.pythonVersion' $CONFIG_FILE)
 PACKAGES_FILE=$(jq -r '.packages_file' $CONFIG_FILE)
 
-cat <<EOF > Dockerfile_test
+cat <<EOF > Dockerfile
 ARG PYTHON_VERSION="$PYTHON_VERSION"
 FROM python:\${PYTHON_VERSION}
 
