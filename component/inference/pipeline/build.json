@@ -4,7 +4,7 @@
     "scoring": "gs://vertex-scripts/ml-scripts/scoring/",
     "switch": "gs://vertex-scripts/ml-scripts/switch",
     "inference_image": {
-      "project": "dollar-tree-project-369709",
+      "project": "inventory-solution-382204",
       "region": "us-west1-docker.pkg.dev",
       "repository": "fd-dask-docker",
       "imageName": "dask-mlinference-image",
