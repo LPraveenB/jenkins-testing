@@ -1,0 +1,47 @@
+#!groovy
+
+pipeline {
+    agent any
+    options {
+        buildDiscarder logRotator(
+                    daysToKeepStr: '16',
+                    numToKeepStr: '10'
+            )
+    }
+    stages {
+        stage('build') {
+            steps {
+                echo 'build test'
+            }
+        }
+        stage("test"){
+              steps{
+                echo "pipenv run pytest"
+              }
+        }
+        stage("prepare_build") {
+            steps {
+                sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/test/"
+            }
+        }
+        stage("publish") {
+            steps {
+                script {
+                    def config = readJSON file: "${WORKSPACE}/component/build.json"
+                    def testConfig = config.script_paths.test_image
+                    def region = testConfig.region
+                    def project = testConfig.project
+                    def repository = testConfig.repository
+                    def imageName = testConfig.imageName
+
+                    // Changing the working directory to where the Dockerfile is located
+                    dir("${WORKSPACE}/component/test") {
+                        sh "docker build -t dask-model-test -f Dockerfile ."
+                        sh "docker tag dask-model-test ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                    }
+                }
+            }
+        }
+    }
+}

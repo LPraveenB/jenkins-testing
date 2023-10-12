@@ -6,7 +6,6 @@ pipeline {
             numToKeepStr: '10'
         )
     }
-
     stages {
         stage('build') {
             steps {
@@ -18,38 +17,43 @@ pipeline {
                 echo "pipenv run pytest"
             }
         }
+
         stage("publish_inference") {
             steps {
                 script {
-                    def config = readJSON file: "${WORKSPACE}/component/inference/build.json"
+                    def config = readJSON file: "${WORKSPACE}/component/inference/pipeline/build.json"
                     def inferenceConfig = config.script_paths.inference_image
                     def region = inferenceConfig.region
                     def project = inferenceConfig.project
                     def repository = inferenceConfig.repository
                     def imageName = inferenceConfig.imageName
                     def pythonVersion = inferenceConfig.pythonVersion
-                    def credentialId = inferenceConfig.credentialsId
 
-                    // Fetch the credential from Jenkins
-                    def serviceAccountKeyJson = credentials(credentialId)
+                    // Changing the working directory to where the Dockerfile is located
+                    dir("${WORKSPACE}/component/inference") {
+                        sh "bash dockerfile.sh"
+                        sh "docker build -t inference -f Dockerfile ."
+                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                    }
+                }
+            }
+        }
+        stage("publish_inference_metrics") {
+            steps {
+                script {
+                    def config = readJSON file: "${WORKSPACE}/component/build.json"
+                    def metricConfig = config.script_paths.inference_metric_image
+                    def region = metricConfig.region
+                    def project = metricConfig.project
+                    def repository = metricConfig.repository
+                    def imageName = metricConfig.imageName
 
-                    if (serviceAccountKeyJson != null) {
-                        // Changing the working directory to where the Dockerfile is located
-                        dir("${WORKSPACE}/component/inference") {
-                            sh "bash dockerfile.sh"
-                            sh "cat Dockerfile"
-                            sh "docker build -t inference -f Dockerfile ."
-                            sh "echo '${serviceAccountKeyJson}' > gcp-key.json"
-                            sh "cat gcp-key.json"
-                            sh "gcloud auth activate-service-account --key-file=gcp-key.json"
-                            sh "docker login -u _json_key --password-stdin https://${region}/${project}/${repository} < gcp-key.json"
-                            sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
-                            sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
-                            sh "docker logout https://${region}/${project}/${repository}"
-                            sh "gcloud auth revoke"
-                        }
-                    } else {
-                        error "Failed to fetch credentials with ID: ${credentialId}"
+                    // Changing the working directory to where the Dockerfile is located
+                    dir("${WORKSPACE}/component/inference") {
+                        sh "docker build -t inference-metric -f Dockerfile_metrics ."
+                        sh "docker tag inference-metric ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
                     }
                 }
             }

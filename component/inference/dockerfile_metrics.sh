@@ -5,7 +5,7 @@ PYTHON_VERSION=$(jq -r '.script_paths.inference_image.pythonVersion' $CONFIG_FIL
 PACKAGES=$(cat build.json | jq -r '.package_versions | to_entries | .[] | "\(.key)==\(.value)"')
 PACKAGES_INSTALL=$(echo $PACKAGES | tr ' ' '\n' | xargs echo)
 
-cat <<EOF > Dockerfile
+cat <<EOF > Dockerfile_metrics
 ARG PYTHON_VERSION="$PYTHON_VERSION"
 FROM python:\${PYTHON_VERSION}
 
@@ -38,7 +38,7 @@ RUN rm -rf build.json
  RUN mkdir -p inference
 COPY * inference/
 WORKDIR inference
-RUN ls
 
-ENTRYPOINT ["bash", "build_inference.sh"]
+
+ENTRYPOINT ["bash", "build_metrics.sh"]
 EOF

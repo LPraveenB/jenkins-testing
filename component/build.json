@@ -1,13 +1,40 @@
 {
-  "scripts_path": {
-    "bfs": "gs://vertex-scripts-test/de-scripts-CICD/bfs/",
-    "denorm": "gs://vertex-scripts-test/de-scripts-CICD/data-denorm/",
-    "audit_apply": "gs://vertex-scripts-test/de-scripts-CICD/audit-apply",
-    "ingestion_af": "gs://us-west1-fd-audit-test-prav-f7b79484-bucket/dags/ghost_calc_pipelines/components/",
-    "ingestion": "gs://vertex-scripts-test/de-scripts-CICD/data-ingestion/",
-    "validator": "gs://vertex-scripts-test/de-scripts-CICD/validator/",
-    "e2e_validator": "gs://vertex-scripts-test/de-scripts-CICD/e2e-validator/",
-    "merge": "gs://vertex-scripts-test/de-scripts-CICD/merge/",
-    "preprocess": "gs://vertex-scripts-test/de-scripts-CICD/pre-processor/"
+  "script_paths": {
+    "data_split": "gs://vertex-scripts/ml-scripts/data-split/",
+    "scoring": "gs://vertex-scripts/ml-scripts/scoring/",
+    "switch": "gs://vertex-scripts/ml-scripts/switch",
+    "inference_image": {
+      "project": "inventory-solution-382204",
+      "region": "us-west1-docker.pkg.dev",
+      "repository": "fd-dask-docker",
+      "imageName": "dask-mlinference-image",
+      "pythonVersion": "3.8.15"
+    },
+    "inference_metric_image": {
+      "project": "dollar-tree-project-369709",
+      "region": "us-west1-docker.pkg.dev",
+      "repository": "fd-dask-docker",
+      "imageName": "dask-mlinference-metrics-image"
+    },
+    "test_image": {
+      "project": "dollar-tree-project-369709",
+      "region": "us-west1-docker.pkg.dev",
+      "repository": "fd-dask-docker",
+      "imageName": "dask-model-test-image"
+    }
+  },
+  "package_versions": {
+    "pyarrow": "11.0.0",
+    "fastparquet": "2023.2.0",
+    "gcsfs": "2023.3.0",
+    "xgboost": "1.7.0",
+    "dask-ml": "2023.3.24",
+    "scikit-learn": "1.2.2",
+    "pandas": "1.5.3",
+    "bokeh": "2.4.0",
+    "seaborn": "0.13.0",
+    "nbformat": "5.9.2",
+    "nbconvert": "7.9.2",
+    "papermill": "2.4.0"
   }
 }

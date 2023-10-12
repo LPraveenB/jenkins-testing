@@ -5,7 +5,7 @@ PYTHON_VERSION=$(jq -r '.script_paths.inference_image.pythonVersion' $CONFIG_FIL
 PACKAGES=$(cat build.json | jq -r '.package_versions | to_entries | .[] | "\(.key)==\(.value)"')
 PACKAGES_INSTALL=$(echo $PACKAGES | tr ' ' '\n' | xargs echo)
 
-cat <<EOF > Dockerfile
+cat <<EOF > Dockerfile_test
 ARG PYTHON_VERSION="$PYTHON_VERSION"
 FROM python:\${PYTHON_VERSION}
 
@@ -33,12 +33,12 @@ RUN python3 -m pip install -U \\
 RUN rm -rf build.json
 
 # Remove additional files or directories if needed
- RUN rm -rf inference
+ RUN rm -rf test
 
  RUN mkdir -p inference
-COPY * inference/
-WORKDIR inference
+COPY * test/
+WORKDIR test
 RUN ls
 
-ENTRYPOINT ["bash", "build_inference.sh"]
+ENTRYPOINT ["bash", "build.sh"]
 EOF

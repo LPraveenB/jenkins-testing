@@ -1,0 +1,29 @@
+#!groovy
+
+pipeline {
+    agent any
+     options {
+        buildDiscarder logRotator(
+                    daysToKeepStr: '16',
+                    numToKeepStr: '10'
+            )
+    }
+    stages {
+        stage('build') {
+            steps {
+                echo 'build scoring'
+            }
+        }
+        stage("test"){
+              steps{
+                echo "pipenv run pytest"
+              }
+        }
+        stage("publish_scoring"){
+              steps{
+                sh "ls"
+                sh "sh component/scoring/pipeline/build.sh"
+              }
+        }
+    }
+}
