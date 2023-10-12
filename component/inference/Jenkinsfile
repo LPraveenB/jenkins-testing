@@ -21,7 +21,7 @@ pipeline {
         stage("publish_inference") {
             steps {
                 script {
-                    def config = readJSON file: "${WORKSPACE}/component/inference/pipeline/build.json"
+                    def config = readJSON file: "${WORKSPACE}/component/inference/build.json"
                     def inferenceConfig = config.script_paths.inference_image
                     def region = inferenceConfig.region
                     def project = inferenceConfig.project
