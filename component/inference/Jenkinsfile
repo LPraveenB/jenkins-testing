@@ -35,10 +35,13 @@ pipeline {
                         sh "bash dockerfile.sh"
                         sh "cat Dockerfile"
                         sh "docker build -t inference -f Dockerfile ."
-                        withCredentials([file(credentialsId: "${dockerCredentials}", variable: 'GCR_CRED')]) {
-                            sh 'cat "${GCR_CRED}" | docker login -u _json_key_base64 --password-stdin https://"${region}"-docker.pkg.dev'
-                            sh 'docker tag inference "${region}/${project}/${repository}/${imageName}:latest"'
-                            sh 'docker push "${region}/${project}/${repository}/${imageName}:latest"'
+                        sh "echo '${SERVICE_ACCOUNT_KEY_JSON}' > gcp-key.json"
+                        sh "gcloud auth activate-service-account --key-file=gcp-key.json"
+                        sh "docker login -u _json_key --password-stdin https://${region}/${project}/${repository} < gcp-key.json"
+                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker logout https://${region}/${project}/${repository}"
+                        sh "gcloud auth revoke"
                         }
                     }
                 }
