@@ -6,20 +6,20 @@
     "inference_image": {
       "project": "inventory-solution-382204",
       "region": "us-west1-docker.pkg.dev",
-      "repository": "fd-dask-docker",
+      "repository": "dask-docker",
       "imageName": "dask-mlinference-image",
       "pythonVersion": "3.8.15"
     },
     "inference_metric_image": {
-      "project": "dollar-tree-project-369709",
+      "project": "inventory-solution-382204",
       "region": "us-west1-docker.pkg.dev",
-      "repository": "fd-dask-docker",
+      "repository": "dask-docker",
       "imageName": "dask-mlinference-metrics-image"
     },
     "test_image": {
       "project": "dollar-tree-project-369709",
       "region": "us-west1-docker.pkg.dev",
-      "repository": "fd-dask-docker",
+      "repository": "dask-docker",
       "imageName": "dask-model-test-image"
     }
   },
