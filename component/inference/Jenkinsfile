@@ -33,9 +33,9 @@ pipeline {
                         sh "bash dockerfile.sh"
                         sh "cat Dockerfile"
                         sh "docker build -t inference -f Dockerfile ."
-                        withDockerRegistry([credentialsId: "gcr:${PROJECT}",
-                        url: "https://LOCATION-docker.pkg.dev/${PROJECT}/${REPOSITORY}"]) {
-                            sh 'docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${region}/${project}/${repository}/${imageName}:latest'
+                        withDockerRegistry([credentialsId: "gcr:${project}",
+                        url: "https://${region}/${project}/${repository}"]) {
+                            sh 'docker tag inference ${region}/${project}/${repository}/${imageName}:latest'
                             sh 'docker push ${region}/${project}/${repository}/${imageName}:latest'
                         }
                     }
