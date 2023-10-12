@@ -1,4 +1,4 @@
-build_json="${WORKSPACE}/component/build.json"
+build_json="build.json"
 
 package_versions=$(jq -r '.package_versions | to_entries[] | "\(.key)==\(.value)"' "$build_json")
 
