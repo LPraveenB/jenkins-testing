@@ -17,11 +17,7 @@ pipeline {
                 echo "pipenv run pytest"
             }
         }
-        stage("prepare_build") {
-            steps {
-                sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
-            }
-        }
+
         stage("publish_inference") {
             steps {
                 script {
@@ -35,7 +31,8 @@ pipeline {
 
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference") {
-                        sh "docker build -t inference --build-arg PYTHON_VERSION=${pythonVersion} -f Dockerfile ."
+                        sh "bash dockerfile.sh"
+                        sh "docker build -t inference -f Dockerfile ."
                         sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
                         sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
                     }
