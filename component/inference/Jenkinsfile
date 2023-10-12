@@ -35,10 +35,10 @@ pipeline {
                         sh "bash dockerfile.sh"
                         sh "cat Dockerfile"
                         sh "docker build -t inference -f Dockerfile ."
-                        withDockerRegistry([credentialsId: "${dockerCredentials}",
-                        url: "https://${region}/${project}/${repository}"]) {
-                            sh 'docker tag inference ${region}/${project}/${repository}/${imageName}:latest'
-                            sh 'docker push ${region}/${project}/${repository}/${imageName}:latest'
+                        withCredentials([file(credentialsId: "${dockerCredentials}", variable: 'GCR_CRED')]) {
+                            sh 'cat "${GCR_CRED}" | docker login -u _json_key_base64 --password-stdin https://"${region}"-docker.pkg.dev'
+                            sh 'docker tag inference "${region}/${project}/${repository}/${imageName}:latest"'
+                            sh 'docker push "${region}/${project}/${repository}/${imageName}:latest"'
                         }
                     }
                 }
