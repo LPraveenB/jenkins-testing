@@ -34,8 +34,8 @@ pipeline {
                         sh "bash dockerfile.sh"
                         sh "cat Dockerfile"
                         sh "docker build -t inference -f Dockerfile ."
-                        sh "docker tag inference gcr.io/${project}/${repository}/${imageName}:latest"
-                        sh "docker push gcr.io/${project}/${repository}/${imageName}:latest"
+                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
                     }
                 }
             }
