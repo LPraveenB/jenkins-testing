@@ -29,7 +29,7 @@ pipeline {
                     def imageTAG = inferenceConfig.imageTAG
                     def pythonVersion = inferenceConfig.pythonVersion
 
-
+                    sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference") {
                         sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
