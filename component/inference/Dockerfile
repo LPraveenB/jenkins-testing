@@ -1,3 +1,4 @@
+ARG PYTHON_VERSION=""
 FROM python:${PYTHON_VERSION}
 
 # Install jq
