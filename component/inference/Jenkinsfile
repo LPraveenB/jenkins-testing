@@ -10,9 +10,7 @@ pipeline {
         stage('versioning') {
             steps {
                 script {
-                    dir("${WORKSPACE}/..") { // Navigating to the component directory
-                        sh './versioning.sh' // Run the versioning script
-                    }
+                    sh 'bash ../versioning.sh' // Update the path to versioning.sh
                 }
             }
         }
