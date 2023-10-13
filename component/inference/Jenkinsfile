@@ -31,6 +31,7 @@ pipeline {
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference") {
                         sh "bash dockerfile.sh"
+                        sh "DOCKER_BUILDKIT=0"
                         sh "docker build -t inference -f Dockerfile ."
                         withCredentials([file(credentialsId: "GCP-AUTH", variable: 'GCR_CRED')]) {
                             sh 'cat "${GCR_CRED}" | docker login -u _json_key_base64 --password-stdin https://us-west1-docker.pkg.dev'
