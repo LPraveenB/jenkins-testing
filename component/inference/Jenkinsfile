@@ -10,11 +10,10 @@ pipeline {
         stage('versioning') {
             steps {
                 script {
-                    sh 'bash ../versioning.sh' // Run the versioning script
+                    sh './versioning.sh' // Run the versioning script
                 }
             }
         }
-    stages {
         stage('build') {
             steps {
                 echo 'build inference'
@@ -35,7 +34,6 @@ pipeline {
                     def repository = inferenceConfig.repository
                     def imageName = inferenceConfig.imageName
                     def imageTAG = inferenceConfig.imageTAG
-
 
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference") {
