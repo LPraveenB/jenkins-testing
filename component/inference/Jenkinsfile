@@ -31,7 +31,9 @@ pipeline {
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference") {
                         sh "bash dockerfile.sh"
-                        sh "gcloud builds submit --region=${region} --tag us-west1-docker.pkg.dev/${project}/${repository}/${imageName}:latest"
+                        sh "gcloud auth configure-docker"
+                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
                     }
                 }
             }

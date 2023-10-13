@@ -5,7 +5,7 @@
     "switch": "gs://vertex-scripts/ml-scripts/switch",
     "inference_image": {
       "project": "inventory-solution-382204",
-      "region": "us-west1",
+      "region": "us-west1-docker.pkg.dev",
       "repository": "fd-dask-docker",
       "imageName": "dask-mlinference-image",
       "pythonVersion": "3.8.15"
