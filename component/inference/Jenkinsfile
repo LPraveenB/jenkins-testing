@@ -17,7 +17,6 @@ pipeline {
                 echo "pipenv run pytest"
             }
         }
-
         stage("publish_inference") {
             steps {
                 script {
@@ -33,27 +32,13 @@ pipeline {
                     dir("${WORKSPACE}/component/inference") {
                         sh "bash dockerfile.sh"
                         sh "docker build -t inference -f Dockerfile ."
-                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
-                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
-                    }
-                }
-            }
-        }
-        stage("publish_inference_metrics") {
-            steps {
-                script {
-                    def config = readJSON file: "${WORKSPACE}/component/build.json"
-                    def metricConfig = config.script_paths.inference_metric_image
-                    def region = metricConfig.region
-                    def project = metricConfig.project
-                    def repository = metricConfig.repository
-                    def imageName = metricConfig.imageName
-
-                    // Changing the working directory to where the Dockerfile is located
-                    dir("${WORKSPACE}/component/inference") {
-                        sh "docker build -t inference-metric -f Dockerfile_metrics ."
-                        sh "docker tag inference-metric ${region}/${project}/${repository}/${imageName}:latest"
-                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                        withCredentials([file(credentialsId: "${project}_artifacts", variable: 'GCP-AUTH')]) {
+                            sh 'cat "${GCP-AUTH}" | docker login -u _json_key_base64 --password-stdin https://"${region}"-docker.pkg.dev'
+                            sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
+                            sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                        }
+                        sh 'docker rmi ${region}/${project}/${repository}/${imageName}:latest'
+                        echo 'Build docker image Finish'
                     }
                 }
             }

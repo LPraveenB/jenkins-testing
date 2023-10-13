@@ -1,0 +1,69 @@
+pipeline {
+  environment {
+    PROJECT = "you-gcp-project"
+    APP_NAME = "you-app-name"
+    REPO_NAME = "your-repo-name"
+    REPO_LOCATION = "your-repo-location"
+    IMAGE_NAME = "${REPO_LOCATION}-docker.pkg.dev/${PROJECT}/${REPO_NAME}/${APP_NAME}"
+  }
+
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          labels:
+            app: test
+        spec:
+          containers:
+          - name: docker
+            image: gcr.io/cloud-builders/docker
+            command:
+            - cat
+            tty: true
+            volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-sock
+          - name: kubectl
+            image: gcr.io/cloud-builders/kubectl
+            command:
+            - cat
+            tty: true
+          volumes:
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock
+      '''
+    }
+  }
+
+  stages {
+    stage('Pull Git'){
+      when { expression { true } }
+      steps{
+        checkout scm
+      }
+    }
+
+    stage('Build docker image') {
+    when { expression { true } }
+      steps{
+        container('docker'){
+          dir('Backend Net/MyDotnet') {
+            echo 'Build docker image Start'
+            sh 'pwd'
+            sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+            withCredentials([file(credentialsId: "${PROJECT}_artifacts", variable: 'GCR_CRED')]){
+              sh 'cat "${GCR_CRED}" | docker login -u _json_key_base64 --password-stdin https://"${REPO_LOCATION}"-docker.pkg.dev'
+              sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+              sh 'docker logout https://"${REPO_LOCATION}"-docker.pkg.dev'
+            }
+            sh 'docker rmi ${IMAGE_NAME}:${IMAGE_TAG}'
+            echo 'Build docker image Finish'
+          }
+        }
+      }
+    }
+  }
+}
