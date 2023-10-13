@@ -10,7 +10,7 @@ pipeline {
         stage('versioning') {
             steps {
                 script {
-                    sh './versioning.sh' // Run the versioning script
+                    sh 'bash ../versioning.sh' // Run the versioning script
                 }
             }
         }
