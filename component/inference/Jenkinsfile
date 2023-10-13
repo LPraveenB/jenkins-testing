@@ -10,7 +10,9 @@ pipeline {
         stage('versioning') {
             steps {
                 script {
-                    sh 'bash ../versioning.sh' // Run the versioning script
+                    dir("${WORKSPACE}/..") { // Navigating to the component directory
+                        sh './versioning.sh' // Run the versioning script
+                    }
                 }
             }
         }
@@ -27,7 +29,7 @@ pipeline {
         stage("publish_inference") {
             steps {
                 script {
-                    def config = readJSON file: "${WORKSPACE}/component/build.json"
+                    def config = readJSON file: "${WORKSPACE}/build.json" // Update the path to build.json
                     def inferenceConfig = config.script_paths.inference_image
                     def region = inferenceConfig.region
                     def project = inferenceConfig.project
@@ -36,10 +38,10 @@ pipeline {
                     def imageTAG = inferenceConfig.imageTAG
 
                     // Changing the working directory to where the Dockerfile is located
-                    dir("${WORKSPACE}/component/inference") {
-                        sh "bash dockerfile.sh"
+                    dir("${WORKSPACE}") { // Using WORKSPACE instead of WORKSPACE/component/inference
+                        sh "bash inference/dockerfile.sh" // Adjust the path to the script
                         sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
-                        sh "docker build -t inference -f Dockerfile ."
+                        sh "docker build -t inference -f inference/Dockerfile ." // Adjust the path to the Dockerfile
                         sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTAG}"
                         sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTAG}"
                     }
