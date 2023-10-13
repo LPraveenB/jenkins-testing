@@ -1,8 +1,8 @@
 #!/bin/bash
 
-CONFIG_FILE="component/build.json"
+CONFIG_FILE="../build.json"
 PYTHON_VERSION=$(jq -r '.script_paths.inference_image.pythonVersion' $CONFIG_FILE)
-PACKAGES=$(cat build.json | jq -r '.package_versions | to_entries | .[] | "\(.key)==\(.value)"')
+PACKAGES=$(cat $CONFIG_FILE | jq -r '.package_versions | to_entries | .[] | "\(.key)==\(.value)"')
 PACKAGES_INSTALL=$(echo $PACKAGES | tr ' ' '\n' | xargs echo)
 
 cat <<EOF > Dockerfile

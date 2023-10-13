@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG_FILE="../build.json"
+CONFIG_FILE="../../component/build.json"
 PYTHON_VERSION=$(jq -r '.script_paths.inference_image.pythonVersion' $CONFIG_FILE)
 PACKAGES=$(cat build.json | jq -r '.package_versions | to_entries | .[] | "\(.key)==\(.value)"')
 PACKAGES_INSTALL=$(echo $PACKAGES | tr ' ' '\n' | xargs echo)
