@@ -20,7 +20,7 @@ pipeline {
         stage("publish_inference") {
             steps {
                 script {
-                    def version = sh(script: 'cat version.txt', returnStdout: true).trim()
+                    def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
                     def config = readJSON file: "${WORKSPACE}/component/build.json"
                     def inferenceConfig = config.script_paths.inference_image
                     def region = inferenceConfig.region
