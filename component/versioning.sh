@@ -8,4 +8,4 @@ generate_version() {
 
 # Update JSON config with the version
 version=$(generate_version)
-jq --arg ver "$version" '.script_paths.inference_image.imageTAG = $ver' component/build.json > temp.json && mv temp.json .component/build.json
+jq --arg ver "$version" '.script_paths.inference_image.imageTAG = $ver' build.json > temp.json && mv temp.json build.json
