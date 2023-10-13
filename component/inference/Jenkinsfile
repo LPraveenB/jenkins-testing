@@ -33,7 +33,7 @@ pipeline {
                         sh "bash dockerfile.sh"
                         sh "docker build -t inference -f Dockerfile ."
                         withCredentials([file(credentialsId: "GCP-AUTH", variable: 'GCR_CRED')]) {
-                            sh 'cat "${GCR_CRED}" | docker login -u _json_key_base64 --password-stdin https://"${region}"-docker.pkg.dev'
+                            sh 'cat "${GCR_CRED}" | docker login -u _json_key_base64 --password-stdin https://${region}-docker.pkg.dev'
                             sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
                             sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
                         }
