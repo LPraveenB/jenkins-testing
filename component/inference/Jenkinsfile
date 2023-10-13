@@ -33,13 +33,9 @@ pipeline {
                         sh "bash dockerfile.sh"
                         sh "DOCKER_BUILDKIT=0"
                         sh "docker build -t inference -f Dockerfile ."
-                        withCredentials([file(credentialsId: "GCP-AUTH", variable: 'GCR_CRED')]) {
-                            sh "gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-west1-docker.pkg.dev'"
-                            sh "docker tag inference ${region}-docker.pkg.dev/${project}/${repository}/${imageName}:latest"
-                            sh "docker push ${region}-docker.pkg.dev/${project}/${repository}/${imageName}:latest"
-                        }
-                        sh 'docker rmi ${region}-docker.pkg.dev/${project}/${repository}/${imageName}:latest'
-                        echo 'Build docker image Finish'
+                        sh "gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-west1-docker.pkg.dev'"
+                        sh "docker tag inference ${region}-docker.pkg.dev/${project}/${repository}/${imageName}:latest"
+                        sh "docker push ${region}-docker.pkg.dev/${project}/${repository}/${imageName}:latest"
                     }
                 }
             }
