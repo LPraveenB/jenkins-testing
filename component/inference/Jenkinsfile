@@ -7,6 +7,14 @@ pipeline {
         )
     }
     stages {
+        stage('versioning') {
+            steps {
+                script {
+                    sh 'bash ../versioning.sh' // Run the versioning script
+                }
+            }
+        }
+    stages {
         stage('build') {
             steps {
                 echo 'build inference'
@@ -26,15 +34,16 @@ pipeline {
                     def project = inferenceConfig.project
                     def repository = inferenceConfig.repository
                     def imageName = inferenceConfig.imageName
-                    def pythonVersion = inferenceConfig.pythonVersion
+                    def imageTAG = inferenceConfig.imageTAG
+
 
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference") {
                         sh "bash dockerfile.sh"
                         sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
                         sh "docker build -t inference -f Dockerfile ."
-                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
-                        sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
+                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTAG}"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTAG}"
                     }
                 }
             }
