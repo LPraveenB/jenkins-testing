@@ -32,6 +32,7 @@ pipeline {
                     dir("${WORKSPACE}/component/inference") {
                         sh "bash dockerfile.sh"
                         sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
+                        sh "docker build -t inference -f Dockerfile ."
                         sh "docker tag inference ${region}/${project}/${repository}/${imageName}:latest"
                         sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
                     }
