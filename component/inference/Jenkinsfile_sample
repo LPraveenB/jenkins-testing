@@ -13,7 +13,7 @@ pipeline {
         apiVersion: v1
         kind: Pod
         metadata:
-          labels:
+          labels:inventory-solution-382204-3181a8751388.json
             app: test
         spec:
           containers:
