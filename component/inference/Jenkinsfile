@@ -20,6 +20,7 @@ pipeline {
         stage("publish_inference") {
             steps {
                 script {
+                    def version = sh(script: 'cat version.txt', returnStdout: true).trim()
                     def config = readJSON file: "${WORKSPACE}/component/build.json"
                     def inferenceConfig = config.script_paths.inference_image
                     def region = inferenceConfig.region
@@ -34,8 +35,8 @@ pipeline {
                     dir("${WORKSPACE}/component/inference") {
                         sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
                         sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference -f Dockerfile ."
-                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTAG}"
-                        sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTAG}"
+                        sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${version}"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:${version}"
                     }
                 }
             }
