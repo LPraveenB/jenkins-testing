@@ -57,7 +57,7 @@ pipeline {
                     def imageName = metricsConfig.imageName
                     def pythonVersion = metricsConfig.pythonVersion
 
-                    sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference_metrics/"
+                    sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/inference_metrics") {
                         sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
