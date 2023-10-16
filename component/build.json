@@ -8,7 +8,6 @@
       "region": "us-west1-docker.pkg.dev",
       "repository": "fd-dask-docker",
       "imageName": "dask-mlinference-image",
-      "imageTAG": "latest",
       "pythonVersion": "3.8.15"
     },
     "inference_metric_image": {

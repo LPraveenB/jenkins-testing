@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
-                    def dateTime = sh(script: 'date +"%Y%m%d%H%M%S"', returnStdout: true).trim()
+                    def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
                     def imageTag = "${version}-${dateTime}"
                     def config = readJSON file: "${WORKSPACE}/component/build.json"
                     def inferenceConfig = config.script_paths.inference_image
