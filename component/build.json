@@ -14,7 +14,8 @@
       "project": "dollar-tree-project-369709",
       "region": "us-west1-docker.pkg.dev",
       "repository": "fd-dask-docker",
-      "imageName": "dask-mlinference-metrics-image"
+      "imageName": "dask-mlinference-metrics-image",
+      "pythonVersion": "3.8.15"
     },
     "test_image": {
       "project": "dollar-tree-project-369709",
