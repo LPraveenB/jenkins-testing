@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION="3.8.15"
+ARG PYTHON_VERSION=""
 FROM python:${PYTHON_VERSION}
 
 # Install jq
@@ -9,21 +9,23 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py &&     python get-pi
 RUN python3 -m pip install --upgrade pip
 
 COPY build.json /app/
+COPY requirements.txt /app/
 
 # Install packages using versions from the config file
 WORKDIR /app
 
-RUN python3 -m pip install -U \
-    
+RUN python3 -m pip install -r requirements.txt
 
 # Remove the JSON config file
 RUN rm -rf build.json
 
 # Remove additional files or directories if needed
- RUN rm -rf inference
+RUN rm -rf inference
 
- RUN mkdir -p inference
+RUN mkdir -p inference
 COPY * inference/
+WORKDIR inference
+RUN ls
 WORKDIR inference
 
 

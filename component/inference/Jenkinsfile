@@ -17,6 +17,7 @@ pipeline {
                 echo "pipenv run pytest"
             }
         }
+
         stage("publish_inference") {
             steps {
                 script {
@@ -37,6 +38,31 @@ pipeline {
                         sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
                         sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference -f Dockerfile ."
                         sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                        sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                    }
+                }
+            }
+        }
+        stage("publish_inference_metrics") {
+            steps {
+                script {
+                    def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
+                    def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
+                    def imageTag = "${version}-${dateTime}"
+                    def config = readJSON file: "${WORKSPACE}/component/build.json"
+                    def metrics_Config = config.script_paths.inference_metrics_image
+                    def region = metrics_Config.region
+                    def project = metrics_Config.project
+                    def repository = metrics_Config.repository
+                    def imageName = metrics_Config.imageName
+                    def pythonVersion = metrics_Config.pythonVersion
+
+                    sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference_metrics/"
+                    // Changing the working directory to where the Dockerfile is located
+                    dir("${WORKSPACE}/component/inference_metrics") {
+                        sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
+                        sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference-metrics -f Dockerfile ."
+                        sh "docker tag inference-metrics ${region}/${project}/${repository}/${imageName}:${imageTag}"
                         sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
                     }
                 }
