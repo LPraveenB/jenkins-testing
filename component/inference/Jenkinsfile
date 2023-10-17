@@ -50,14 +50,10 @@ pipeline {
                         sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
                         // Changing the working directory to where the Dockerfile is located
                         dir("${WORKSPACE}/component/inference") {
-                            script {
-                                try {
-                                    sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
-                                    sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference -f Dockerfile ."
-                                    sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                                    sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                                }
-                            }
+                            sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
+                            sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference -f Dockerfile ."
+                            sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                            sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
                         }
                     }
                 }
@@ -84,14 +80,10 @@ pipeline {
                         sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
                         // Changing the working directory to where the Dockerfile is located
                         dir("${WORKSPACE}/component/inference") {
-                            script {
-                                try {
-                                    sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
-                                    sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference-metrics -f Dockerfile_metrics ."
-                                    sh "docker tag inference-metrics ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                                    sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                                }
-                            }
+                            sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
+                            sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference-metrics -f Dockerfile_metrics ."
+                            sh "docker tag inference-metrics ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                            sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
                         }
                     }
                 }
