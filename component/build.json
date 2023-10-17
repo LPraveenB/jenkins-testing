@@ -22,7 +22,8 @@
       "project": "inventory-solution-382204",
       "region": "us-west1-docker.pkg.dev",
       "repository": "fd-dask-docker",
-      "imageName": "dask-model-test-image"
+      "imageName": "dask-model-test-image",
+      "pythonVersion": "3.8.15"
     }
   }
 }

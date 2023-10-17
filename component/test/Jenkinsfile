@@ -43,6 +43,7 @@ pipeline {
                     def project = testConfig.project
                     def repository = testConfig.repository
                     def imageName = testConfig.imageName
+                    def pythonVersion = testConfig.pythonVersion
 
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/test") {
