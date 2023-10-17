@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Build and Test') {
             when {
-                changeset '.*component/.*'
+                changeset '.*component/test/.*'
             }
             steps {
                 echo 'Building and testing...'
