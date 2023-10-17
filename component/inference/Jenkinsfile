@@ -32,29 +32,34 @@ pipeline {
         stage("publish_inference") {
             steps {
                 script {
-                    def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
-                    def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
-                    def imageTag = "${version}-${dateTime}"
-                    def config = readJSON file: "${WORKSPACE}/component/build.json"
-                    def inferenceConfig = config.script_paths.inference_image
-                    def region = inferenceConfig.region
-                    def project = inferenceConfig.project
-                    def repository = inferenceConfig.repository
-                    def imageName = inferenceConfig.imageName
-                    def pythonVersion = inferenceConfig.pythonVersion
+                    def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
+                    if (hasChanges == 0) {
+                        echo "Skipping image build since there are no changes."
+                    } else {
+                        def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
+                        def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
+                        def imageTag = "${version}-${dateTime}"
+                        def config = readJSON file: "${WORKSPACE}/component/build.json"
+                        def inferenceConfig = config.script_paths.inference_image
+                        def region = inferenceConfig.region
+                        def project = inferenceConfig.project
+                        def repository = inferenceConfig.repository
+                        def imageName = inferenceConfig.imageName
+                        def pythonVersion = inferenceConfig.pythonVersion
 
-                    sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
-                    // Changing the working directory to where the Dockerfile is located
-                    dir("${WORKSPACE}/component/inference") {
-                        script {
-                            try {
-                                sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
-                                sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference -f Dockerfile ."
-                                sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                                sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                            } catch (Exception e) {
-                                echo "Error: ${e}"
-                                currentBuild.result = 'FAILURE'
+                        sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
+                        // Changing the working directory to where the Dockerfile is located
+                        dir("${WORKSPACE}/component/inference") {
+                            script {
+                                try {
+                                    sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
+                                    sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference -f Dockerfile ."
+                                    sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                                    sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                                } catch (Exception e) {
+                                    echo "Error: ${e}"
+                                    currentBuild.result = 'FAILURE'
+                                }
                             }
                         }
                     }
@@ -64,29 +69,34 @@ pipeline {
         stage("publish_inference_metrics") {
             steps {
                 script {
-                    def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
-                    def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
-                    def imageTag = "${version}-${dateTime}"
-                    def config = readJSON file: "${WORKSPACE}/component/build.json"
-                    def metricsConfig = config.script_paths.inference_metric_image
-                    def region = metricsConfig.region
-                    def project = metricsConfig.project
-                    def repository = metricsConfig.repository
-                    def imageName = metricsConfig.imageName
-                    def pythonVersion = metricsConfig.pythonVersion
+                    def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
+                    if (hasChanges == 0) {
+                        echo "Skipping image build since there are no changes."
+                    } else {
+                        def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
+                        def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
+                        def imageTag = "${version}-${dateTime}"
+                        def config = readJSON file: "${WORKSPACE}/component/build.json"
+                        def metricsConfig = config.script_paths.inference_metric_image
+                        def region = metricsConfig.region
+                        def project = metricsConfig.project
+                        def repository = metricsConfig.repository
+                        def imageName = metricsConfig.imageName
+                        def pythonVersion = metricsConfig.pythonVersion
 
-                    sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
-                    // Changing the working directory to where the Dockerfile is located
-                    dir("${WORKSPACE}/component/inference") {
-                        script {
-                            try {
-                                sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
-                                sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference-metrics -f Dockerfile_metrics ."
-                                sh "docker tag inference-metrics ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                                sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                            } catch (Exception e) {
-                                echo "Error: ${e}"
-                                currentBuild.result = 'FAILURE'
+                        sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
+                        // Changing the working directory to where the Dockerfile is located
+                        dir("${WORKSPACE}/component/inference") {
+                            script {
+                                try {
+                                    sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
+                                    sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference-metrics -f Dockerfile_metrics ."
+                                    sh "docker tag inference-metrics ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                                    sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                                } catch (Exception e) {
+                                    echo "Error: ${e}"
+                                    currentBuild.result = 'FAILURE'
+                                }
                             }
                         }
                     }
