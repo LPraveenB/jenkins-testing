@@ -7,24 +7,6 @@ pipeline {
         )
     }
     stages {
-        stage('Check Changes') {
-            steps {
-                script {
-                    sh 'git fetch origin'
-                    def hasChangesOutput = sh(script: 'git diff origin/main', returnStdout: true).trim()
-                    echo "Git Diff Output: ${hasChangesOutput}"
-                }
-            }
-        }
-        stage('Build and Test') {
-            when {
-                changeset '**/component/test/**'
-            }
-            steps {
-                echo 'Building and testing...'
-                // Add your build and test steps here
-            }
-        }
         stage("Prepare Build") {
             steps {
                 sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/test/"
@@ -33,8 +15,8 @@ pipeline {
         stage("Publish") {
             steps {
                 script {
-                    def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
-                    if (hasChanges == 1) {
+                    def hasChanges = env.CHANGE_ID
+                    if (!hasChanges) {
                         echo "Skipping image build since there are no changes."
                     } else {
                         // Your existing script for building and pushing the Docker image
