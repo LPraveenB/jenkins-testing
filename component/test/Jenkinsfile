@@ -1,12 +1,10 @@
-#!groovy
-
 pipeline {
     agent any
     options {
         buildDiscarder logRotator(
-                    daysToKeepStr: '16',
-                    numToKeepStr: '10'
-            )
+            daysToKeepStr: '16',
+            numToKeepStr: '10'
+        )
     }
     stages {
         stage('Check Changes') {
@@ -21,16 +19,15 @@ pipeline {
                 }
             }
         }
-    stages {
         stage('build') {
             steps {
                 echo 'build test'
             }
         }
-        stage("test"){
-              steps{
+        stage("test") {
+            steps {
                 echo "pipenv run pytest"
-              }
+            }
         }
         stage("prepare_build") {
             steps {
