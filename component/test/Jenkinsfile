@@ -12,7 +12,7 @@ pipeline {
         stage("Check Changes") {
             steps {
                 script {
-                    def previousVersion = sh(script: "git show HEAD~1:component/test/version.txt", returnStdout: true).trim()
+                    //def previousVersion = sh(script: "git show HEAD~1:component/test/version.txt", returnStdout: true).trim()
                     def currentVersion = sh(script: "cat ${WORKSPACE}/component/test/version.txt", returnStdout: true).trim()
                     if (previousVersion != currentVersion) {
                         echo "Version file has changed. Building the image..."
