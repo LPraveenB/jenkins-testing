@@ -28,5 +28,6 @@ WORKDIR inference
 
 WORKDIR inference
 
+RUN ls
 
 ENTRYPOINT ["bash", "build_metrics.sh"]
