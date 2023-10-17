@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
-                    if (hasChanges == 0) {
+                    if (hasChanges == 1) {
                         echo "Skipping image build since there are no changes."
                     } else {
                         // Your existing script for building and pushing the Docker image
