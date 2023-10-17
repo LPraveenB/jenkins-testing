@@ -46,7 +46,8 @@ pipeline {
 
                     // Changing the working directory to where the Dockerfile is located
                     dir("${WORKSPACE}/component/test") {
-                        sh "docker build -t dask-model-test -f Dockerfile ."
+                        sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
+                        sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t dask-model-test -f Dockerfile ."
                         sh "docker tag dask-model-test ${region}/${project}/${repository}/${imageName}:latest"
                         sh "docker push ${region}/${project}/${repository}/${imageName}:latest"
                     }
