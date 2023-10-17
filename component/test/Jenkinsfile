@@ -12,6 +12,20 @@ pipeline {
                 sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/test/"
             }
         }
+        stage("Check Changes") {
+            steps {
+                script {
+                    def previousVersion = sh(script: "git show HEAD~1:${WORKSPACE}/component/test/version.txt", returnStdout: true).trim()
+                    def currentVersion = sh(script: "cat ${WORKSPACE}/component/test/version.txt", returnStdout: true).trim()
+                    if (previousVersion != currentVersion) {
+                        echo "Version file has changed. Building the image..."
+                    } else {
+                        echo "No changes in the version file. Skipping image build."
+                        currentBuild.result = 'SUCCESS'
+                    }
+                }
+            }
+        }
         stage("Publish") {
             steps {
                 script {
@@ -20,23 +34,23 @@ pipeline {
                         echo "Skipping image build since there are no changes."
                     } else {
                         // Your existing script for building and pushing the Docker image
-                        def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
+                        def version = sh(script: 'cat ${WORKSPACE}/component/test/version.txt', returnStdout: true).trim()
                         def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
                         def imageTag = "${version}-${dateTime}"
                         def config = readJSON file: "${WORKSPACE}/component/build.json"
-                        def inferenceConfig = config.script_paths.inference_image
-                        def region = inferenceConfig.region
-                        def project = inferenceConfig.project
-                        def repository = inferenceConfig.repository
-                        def imageName = inferenceConfig.imageName
-                        def pythonVersion = inferenceConfig.pythonVersion
+                        def testConfig = config.script_paths.test_image
+                        def region = testConfig.region
+                        def project = testConfig.project
+                        def repository = testConfig.repository
+                        def imageName = testConfig.imageName
+                        def pythonVersion = testConfig.pythonVersion
 
-                        sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/inference/"
+                        sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/test/"
                         // Changing the working directory to where the Dockerfile is located
-                        dir("${WORKSPACE}/component/inference") {
+                        dir("${WORKSPACE}/component/test") {
                             sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
-                            sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference -f Dockerfile ."
-                            sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTag}"
+                            sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t dask-model-test -f Dockerfile ."
+                            sh "docker tag dask-model-test ${region}/${project}/${repository}/${imageName}:${imageTag}"
                             sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
                         }
                     }
