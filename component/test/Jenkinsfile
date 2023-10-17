@@ -13,46 +13,40 @@ pipeline {
             steps {
                 script {
                     def previousVersion = sh(script: 'git show HEAD~1:component/test/version.txt', returnStdout: true).trim()
-                    echo previousVersion
+                    echo "Previous version: ${previousVersion}"
                     def currentVersion = sh(script: "cat ${WORKSPACE}/component/test/version.txt", returnStdout: true).trim()
-                    echo currentVersion
+                    echo "Current version: ${currentVersion}"
                     if (previousVersion != currentVersion) {
-                        echo "Version file has changed. Building the image..."
+                        echo "Version file has changed. Proceeding with image build..."
+                        buildImage()
                     } else {
                         echo "No changes in the version file. Skipping image build."
-                        currentBuild.result = 'SUCCESS'
                     }
                 }
             }
         }
-        stage("Publish") {
-            steps {
-                script {
-                    def hasChanges = env.CHANGE_ID
-                    if (!hasChanges) {
-                        echo "Skipping image build since there are no changes."
-                    } else {
-                        def version = sh(script: 'cat ${WORKSPACE}/component/test/version.txt', returnStdout: true).trim()
-                        def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
-                        def imageTag = "${version}-${dateTime}"
-                        def config = readJSON file: "${WORKSPACE}/component/build.json"
-                        def testConfig = config.script_paths.test_image
-                        def region = testConfig.region
-                        def project = testConfig.project
-                        def repository = testConfig.repository
-                        def imageName = testConfig.imageName
-                        def pythonVersion = testConfig.pythonVersion
+    }
+}
 
-                        sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/test/"
-                        dir("${WORKSPACE}/component/test") {
-                            sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
-                            sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t dask-model-test -f Dockerfile ."
-                            sh "docker tag dask-model-test ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                            sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                        }
-                    }
-                }
-            }
+def buildImage() {
+    script {
+        def version = sh(script: 'cat ${WORKSPACE}/component/test/version.txt', returnStdout: true).trim()
+        def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
+        def imageTag = "${version}-${dateTime}"
+        def config = readJSON file: "${WORKSPACE}/component/build.json"
+        def testConfig = config.script_paths.test_image
+        def region = testConfig.region
+        def project = testConfig.project
+        def repository = testConfig.repository
+        def imageName = testConfig.imageName
+        def pythonVersion = testConfig.pythonVersion
+
+        sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/test/"
+        dir("${WORKSPACE}/component/test") {
+            sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
+            sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t dask-model-test -f Dockerfile ."
+            sh "docker tag dask-model-test ${region}/${project}/${repository}/${imageName}:${imageTag}"
+            sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
         }
     }
 }
