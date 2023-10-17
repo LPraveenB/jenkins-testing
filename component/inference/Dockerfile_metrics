@@ -25,7 +25,7 @@ RUN rm -rf inference
 RUN mkdir -p inference
 COPY * inference/
 WORKDIR inference
-RUN ls
+
 WORKDIR inference
 
 
