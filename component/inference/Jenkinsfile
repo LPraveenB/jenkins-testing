@@ -56,9 +56,6 @@ pipeline {
                                     sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference -f Dockerfile ."
                                     sh "docker tag inference ${region}/${project}/${repository}/${imageName}:${imageTag}"
                                     sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                                } catch (Exception e) {
-                                    echo "Error: ${e}"
-                                    currentBuild.result = 'FAILURE'
                                 }
                             }
                         }
@@ -93,9 +90,6 @@ pipeline {
                                     sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t inference-metrics -f Dockerfile_metrics ."
                                     sh "docker tag inference-metrics ${region}/${project}/${repository}/${imageName}:${imageTag}"
                                     sh "docker push ${region}/${project}/${repository}/${imageName}:${imageTag}"
-                                } catch (Exception e) {
-                                    echo "Error: ${e}"
-                                    currentBuild.result = 'FAILURE'
                                 }
                             }
                         }
