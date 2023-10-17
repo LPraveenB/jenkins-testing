@@ -25,6 +25,5 @@ RUN rm -rf build.json
  RUN mkdir -p inference
 COPY * inference/
 WORKDIR inference
-RUN ls
 
 ENTRYPOINT ["bash", "build_inference.sh"]
