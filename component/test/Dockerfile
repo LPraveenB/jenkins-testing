@@ -25,5 +25,6 @@ RUN rm -rf test
 RUN mkdir -p test
 COPY * test/
 WORKDIR test
+RUN ls
 
 ENTRYPOINT ["bash", "build.sh"]
