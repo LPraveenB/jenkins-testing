@@ -1,10 +1,7 @@
 pipeline {
     agent any
     options {
-        buildDiscarder logRotator(
-            daysToKeepStr: '16',
-            numToKeepStr: '10'
-        )
+        buildDiscarder logRotator(daysToKeepStr: '16', numToKeepStr: '10')
     }
     stages {
         stage("Prepare Build") {
@@ -33,7 +30,6 @@ pipeline {
                     if (!hasChanges) {
                         echo "Skipping image build since there are no changes."
                     } else {
-                        // Your existing script for building and pushing the Docker image
                         def version = sh(script: 'cat ${WORKSPACE}/component/test/version.txt', returnStdout: true).trim()
                         def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
                         def imageTag = "${version}-${dateTime}"
@@ -46,7 +42,6 @@ pipeline {
                         def pythonVersion = testConfig.pythonVersion
 
                         sh "cp ${WORKSPACE}/component/build.json ${WORKSPACE}/component/test/"
-                        // Changing the working directory to where the Dockerfile is located
                         dir("${WORKSPACE}/component/test") {
                             sh "gcloud auth configure-docker us-west1-docker.pkg.dev"
                             sh "docker build --build-arg=PYTHON_VERSION=${pythonVersion} -t dask-model-test -f Dockerfile ."
