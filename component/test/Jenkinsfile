@@ -10,12 +10,8 @@ pipeline {
         stage('Check Changes') {
             steps {
                 script {
-                    def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
-                    if (hasChanges == 0) {
-                        echo "No changes since last build"
-                        currentBuild.result = 'SUCCESS'
-                        return
-                    }
+                    def hasChangesOutput = sh(script: 'git diff origin/main', returnStdout: true).trim()
+                    echo "Git Diff Output: ${hasChangesOutput}"
                 }
             }
         }

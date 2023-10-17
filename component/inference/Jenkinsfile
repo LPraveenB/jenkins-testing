@@ -10,7 +10,7 @@ pipeline {
         stage('Check Changes') {
             steps {
                 script {
-                    def gitDiffOutput = sh(script: 'git diff origin/main', returnStdout: true).trim()
+                    def gitDiffOutput = sh(script: 'git diff origin/main' , returnStdout: true).trim()
                     if (gitDiffOutput) {
                         echo "Changes since last build:"
                         echo "${gitDiffOutput}"
