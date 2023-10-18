@@ -7,22 +7,6 @@ pipeline {
         )
     }
     stages {
-        stage('Check Changes') {
-            steps {
-                script {
-                    def gitDiffOutput = sh(script: 'git diff origin/main', returnStdout: true).trim()
-                    if (gitDiffOutput) {
-                        echo "Changes since last build:"
-                        echo "${gitDiffOutput}"
-                    } else {
-                        echo "No changes since last build"
-                        currentBuild.result = 'SUCCESS'
-                        return
-                    }
-                }
-            }
-        }
-
         stage('build') {
             steps {
                 echo 'build inference'
@@ -33,28 +17,37 @@ pipeline {
                 echo "pipenv run pytest"
             }
         }
+
         stage('Publish') {
             parallel {
-                stage("Publish Inference") {
+                stage('Check Changes inference') {
                     steps {
                         script {
-                            def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
-                            if (hasChanges == 0) {
-                                echo "Skipping image build since there are no changes."
-                            } else {
+                            def previousVersion = sh(script: 'git show HEAD~1:component/inference/version.txt', returnStdout: true).trim()
+                            echo "Previous version: ${previousVersion}"
+                            def currentVersion = sh(script: "cat ${WORKSPACE}/component/inference/version.txt", returnStdout: true).trim()
+                            echo "Current version: ${currentVersion}"
+                            if (previousVersion != currentVersion) {
+                                echo "Version file has changed. Proceeding with image build..."
                                 buildInferenceImage()
+                            } else {
+                                echo "No changes in the version file. Skipping image build."
                             }
                         }
                     }
                 }
-                stage("Publish Inference Metrics") {
+                stage('Check Changes metrics') {
                     steps {
                         script {
-                            def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
-                            if (hasChanges == 0) {
-                                echo "Skipping image build since there are no changes."
-                            } else {
+                            def previousVersion = sh(script: 'git show HEAD~1:component/inference/version_metrics.txt', returnStdout: true).trim()
+                            echo "Previous version: ${previousVersion}"
+                            def currentVersion = sh(script: "cat ${WORKSPACE}/component/inference/version_metrics.txt", returnStdout: true).trim()
+                            echo "Current version: ${currentVersion}"
+                            if (previousVersion != currentVersion) {
+                                echo "Version file has changed. Proceeding with image build..."
                                 buildInferenceMetricsImage()
+                            } else {
+                                echo "No changes in the version file. Skipping image build."
                             }
                         }
                     }
@@ -63,7 +56,6 @@ pipeline {
         }
     }
 }
-
 def buildInferenceImage() {
     def version = sh(script: 'cat ${WORKSPACE}/component/inference/version.txt', returnStdout: true).trim()
     def dateTime = sh(script: 'date +"%Y%m%d%H%M"', returnStdout: true).trim()
