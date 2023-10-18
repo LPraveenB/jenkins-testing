@@ -10,7 +10,7 @@ pipeline {
         stage('Check Changes') {
             steps {
                 script {
-                    def gitDiffOutput = sh(script: 'git diff origin/main', returnStdout: true).trim()
+                    def gitDiffOutput = sh(script: 'git diff origin/main' , returnStdout: true).trim()
                     if (gitDiffOutput) {
                         echo "Changes since last build:"
                         echo "${gitDiffOutput}"
@@ -33,30 +33,26 @@ pipeline {
                 echo "pipenv run pytest"
             }
         }
-        stage('Publish') {
-            parallel {
-                stage("Publish Inference") {
-                    steps {
-                        script {
-                            def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
-                            if (hasChanges == 0) {
-                                echo "Skipping image build since there are no changes."
-                            } else {
-                                buildInferenceImage()
-                            }
-                        }
+        stage("publish_inference") {
+            steps {
+                script {
+                    def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
+                    if (hasChanges == 0) {
+                            echo "Skipping image build since there are no changes."
+                    } else {
+                        buildInferenceImage()
                     }
                 }
-                stage("Publish Inference Metrics") {
-                    steps {
-                        script {
-                            def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
-                            if (hasChanges == 0) {
-                                echo "Skipping image build since there are no changes."
-                            } else {
-                                buildInferenceMetricsImage()
-                            }
-                        }
+            }
+        }
+        stage("publish_inference_metrics") {
+            steps {
+                script {
+                    def hasChanges = sh(script: 'git diff --quiet origin/main', returnStatus: true)
+                    if (hasChanges == 0) {
+                        echo "Skipping image build since there are no changes."
+                    } else {
+                        buildInferenceMetricsImage()
                     }
                 }
             }
